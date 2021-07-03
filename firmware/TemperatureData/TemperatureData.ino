@@ -34,10 +34,18 @@ unsigned long wifiEpoch = 0;
 
 char lcdBuffer[80];
 String oledline[9];
-char data[10];
+char data[80];
 int status = WL_IDLE_STATUS;
 
 WiFiUDP Udp;
+
+char packetBuffer[256];
+
+IPAddress ip(192, 168, 1, 156);
+
+unsigned int localPort = 5005;
+
+boolean sendData = false;
 
 
 void setup() {
@@ -73,10 +81,21 @@ void setup() {
     delay(250);
   }
   startMillis = millis();  //initial start time
-
+  Udp.begin(localPort);
 }
 
 void loop() {
+
+  int packetSize = Udp.parsePacket();
+  if (packetSize) {
+    IPAddress remoteIp = Udp.remoteIP();
+    int len = Udp.read(packetBuffer, 255);
+    if (len > 0) {
+      packetBuffer[len] = 0;
+    }
+
+    sendData = true;
+  }
 
   currentMillis = millis();
 
@@ -84,9 +103,8 @@ void loop() {
   //*************************************//
   //*** Start OLED Display **************//
   //*************************************//
-  if (currentMillis - startMillis >= 1000){ //Display every second
+  if( (currentMillis - startMillis >= 1000) && sendData==true){ //Display every second
      
-      
       wifiEpoch = WiFi.getTime();
       // display data on OLED
       sprintf(lcdBuffer, "%lddBm %d.%d.%d.%d", WiFi.RSSI(), WiFi.localIP()[0], WiFi.localIP()[1], WiFi.localIP()[2], WiFi.localIP()[3]);
@@ -111,8 +129,9 @@ void loop() {
       oledline[5] = lcdBuffer;
       displayTextOLED(oledline);
       sprintf(data, "Data %.2f %.2f", (float)temperature,(float)humidity);
+      Serial.println(data);
       // send data to server
-      Udp.beginPacket("192.168.2.93", 5005);
+      Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
       Udp.write(data);
       Udp.endPacket();
       
