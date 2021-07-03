@@ -15,9 +15,6 @@ f.close()
 # base_url variable to store url
 base_url = "http://api.openweathermap.org/data/2.5/weather?"
 
-# Give city name
-city_name = input("Enter city name : ")
-
 # complete_url variable to store
 # complete url address
 complete_url = base_url + "&zip=22030,us&appid=" + api_key
