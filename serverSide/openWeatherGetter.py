@@ -3,7 +3,7 @@
 # using openweathermap api
 
 # import required modules
-import requests, json
+import requests, json,time
 
 f = open("secret.txt","r")
 # Enter your API key here
@@ -20,32 +20,38 @@ complete_url = base_url + "&zip=22030,us&appid=" + api_key
 
 # get method of requests module
 # return response object
-response = requests.get(complete_url)
 
 # json method of response object
 # convert json format data into
 # python format data
-x = response.json()
+
 # Now x contains list of nested dictionaries
 # Check the value of "cod" key is equal to
 # "404", means city is found otherwise,
 # city is not found
-if x["cod"] != "404":
 
-	# store the value of "main"
-	# key in variable y
-	y = x["main"]
+while(1):
+	response = requests.get(complete_url)
 
-	# store the value corresponding
-	# to the "temp" key of y
-	current_temperature = y["temp"] - 273.15 # in celcius
+	x = response.json()
+	if x["cod"] != "404":
+
+		# store the value of "main"
+		# key in variable y
+		y = x["main"]
+
+		# store the value corresponding
+		# to the "temp" key of y
+		current_temperature = y["temp"] - 273.15 # in celcius
 
 
-	# store the value corresponding
-	# to the "humidity" key of y
-	current_humidity = y["humidity"] # %
+		# store the value corresponding
+		# to the "humidity" key of y
+		current_humidity = y["humidity"] # %
+		f = open("outsideWeatherData.csv","a")
+		f.write(str(current_temperature) + "," + str(current_humidity)+","+str(time.time())+"\n")
+		f.close()
+		time.sleep(100)
 
-	print(current_temperature,current_humidity)
-
-else:
-	print(" City Not Found ")
+	else:
+		print(" City Not Found ")
