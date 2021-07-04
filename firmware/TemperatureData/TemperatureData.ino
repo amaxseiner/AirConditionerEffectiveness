@@ -105,7 +105,7 @@ void loop() {
   //*************************************//
   //*** Start OLED Display **************//
   //*************************************//
-  if( (currentMillis - startMillis >= 1000) && sendData==true){ //Display every second
+  if( (currentMillis - startMillis >= 10000) && sendData==true){ //Display every second
      
       wifiEpoch = WiFi.getTime();
       // display data on OLED
