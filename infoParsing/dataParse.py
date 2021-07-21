@@ -67,3 +67,5 @@ plt.show()
 
 print(np.average(bedroomTemperatureData))
 print(np.average(basementTemperatureData))
+print(np.average(outsideTemperatureData))
+print(np.average(midTemperatureData))
